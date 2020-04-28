@@ -66,7 +66,6 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
         putLog("Client connected");
         String name = "SocketThread " + socket.getInetAddress() + ":" + socket.getPort();
         new ClientThread(this, name, socket);
-        System.out.println("onSocketAccepted");
     }
 
     @Override
@@ -114,8 +113,21 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
         if (client.isAuthorized()) {
             handleAuthMessage(client, msg);
         } else {
+            timeSocketAuth(thread);
             handleNonAuthMessage(client, msg);
         }
+    }
+
+    private synchronized void timeSocketAuth(SocketThread thread) {
+        ClientThread client = (ClientThread) thread;
+        new Thread(() -> {
+            try {
+                sleep(Library.TIME_AUTH);
+                if (!client.isAuthorized()) thread.close();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     @Override
