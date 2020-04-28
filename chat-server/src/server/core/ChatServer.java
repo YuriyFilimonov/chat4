@@ -10,6 +10,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
 
+import static java.lang.Thread.sleep;
+
 public class ChatServer implements ServerSocketThreadListener, SocketThreadListener {
 
     ServerSocketThread server;
@@ -41,7 +43,7 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
 
     /**
      * Server Socket Thread Listener methods
-     * */
+     */
 
     @Override
     public void onServerStarted(ServerSocketThread thread) {
@@ -64,6 +66,7 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
         putLog("Client connected");
         String name = "SocketThread " + socket.getInetAddress() + ":" + socket.getPort();
         new ClientThread(this, name, socket);
+        System.out.println("onSocketAccepted");
     }
 
     @Override
@@ -81,7 +84,7 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
 
     /**
      * Socket Thread Listener methods
-     * */
+     */
 
     @Override
     public synchronized void onSocketStart(SocketThread thread, Socket socket) {
@@ -110,8 +113,9 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
         ClientThread client = (ClientThread) thread;
         if (client.isAuthorized()) {
             handleAuthMessage(client, msg);
-        } else
+        } else {
             handleNonAuthMessage(client, msg);
+        }
     }
 
     @Override
