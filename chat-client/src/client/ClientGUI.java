@@ -22,17 +22,20 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     private final JTextArea log = new JTextArea();
     private final JPanel panelTop = new JPanel(new GridLayout(2, 3));
-    private final JTextField tfIPAddress = new JTextField("192.168.1.117");
+    private final JTextField tfIPAddress = new JTextField("192.168.1.66");
     private final JTextField tfPort = new JTextField("8189");
     private final JCheckBox cbAlwaysOnTop = new JCheckBox("Always on top", true);
     private final JTextField tfLogin = new JTextField("yuriy");
     private final JPasswordField tfPassword = new JPasswordField("123");
     private final JButton btnLogin = new JButton("Login");
 
-    private final JPanel panelBottom = new JPanel(new BorderLayout());
+    private final JPanel panelBottom = new JPanel(new GridLayout(2,3));
     private final JButton btnDisconnect = new JButton("<html><b>Disconnect</b></html>");
     private final JTextField tfMessage = new JTextField();
     private final JButton btnSend = new JButton("Send");
+    private final JButton btnTest = new JButton("Test");
+    private final JTextField tfNickname = new JTextField();
+    private final JButton btnNickname = new JButton("nickname");
 
     private final JList<String> userList = new JList<>();
     private boolean shownIoErrors = false;
@@ -68,6 +71,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         log.setEditable(false);
         cbAlwaysOnTop.addActionListener(this);
         tfMessage.addActionListener(this);
+        btnNickname.addActionListener(this);
         btnSend.addActionListener(this);
         btnLogin.addActionListener(this);
         btnDisconnect.addActionListener(this);
@@ -77,10 +81,14 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         panelTop.add(cbAlwaysOnTop);
         panelTop.add(tfLogin);
         panelTop.add(tfPassword);
+        panelTop.add(btnNickname);
         panelTop.add(btnLogin);
-        panelBottom.add(btnDisconnect, BorderLayout.WEST);
-        panelBottom.add(tfMessage, BorderLayout.CENTER);
-        panelBottom.add(btnSend, BorderLayout.EAST);
+        panelBottom.add(btnDisconnect);
+        panelBottom.add(tfMessage);
+        panelBottom.add(btnSend);
+        panelBottom.add(btnTest);
+        panelBottom.add(tfNickname);
+        panelBottom.add(btnNickname);
         panelBottom.setVisible(false);
 
         add(scrUser, BorderLayout.EAST);
@@ -95,6 +103,8 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         Object src = e.getSource();
         if (src == cbAlwaysOnTop) {
             setAlwaysOnTop(cbAlwaysOnTop.isSelected());
+        } else if (src == btnNickname || src == tfNickname) {
+            changeNickname();
         } else if (src == btnSend || src == tfMessage) {
             sendMessage();
         } else if (src == btnLogin) {
@@ -105,6 +115,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
             throw new RuntimeException("Unknown source:" + src);
         }
     }
+
 
     private void connect() {
         try {
@@ -124,6 +135,16 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         socketThread.sendMessage(Library.getTypeBcastClient(msg));
         //putLog(String.format("%s: %s", username, msg));
         //wrtMsgToLogFile(msg, username);
+    }
+
+    private void changeNickname() {
+        String login = tfLogin.getText();
+        String password = new String(tfPassword.getPassword());
+        String nickname = tfNickname.getText();
+        if ("".equals(nickname)) return;
+        tfNickname.setText(null);
+        tfNickname.requestFocusInWindow();
+        socketThread.sendMessage(Library.getChangeNickname(login, password, nickname));
     }
 
     private void wrtMsgToLogFile(String msg, String username) {
@@ -170,7 +191,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     /**
      * Socket Thread Listener methods
-     * */
+     */
 
     @Override
     public void onSocketStart(SocketThread thread, Socket socket) {
@@ -220,6 +241,9 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
             case Library.MSG_FORMAT_ERROR:
                 putLog(value);
                 socketThread.close();
+                break;
+            case Library.TYPE_BCAST_CLIENT:
+                putLog(arr[1]);
                 break;
             case Library.TYPE_BROADCAST:
                 putLog(DATE_FORMAT.format(Long.parseLong(arr[1])) +

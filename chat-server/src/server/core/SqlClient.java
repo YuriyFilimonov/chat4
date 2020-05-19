@@ -29,6 +29,17 @@ public class SqlClient {
         return null;
     }
 
+    synchronized static void setNickname(String login, String password, String nickname) {
+        String query = String.format("update Users set nickname = '%s' WHERE login = '%s' and password = '%s';",
+                nickname, login, password);
+        try {
+            statement.executeUpdate(query);
+            System.out.println(nickname);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     synchronized static void disconnect() {
         try {
             connection.close();
@@ -36,5 +47,4 @@ public class SqlClient {
             throw new RuntimeException(e);
         }
     }
-
 }
