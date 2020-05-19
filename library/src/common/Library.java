@@ -2,13 +2,13 @@ package common;
 
 public class Library {
     /*
-    * /auth_request±login±password
-    * /auth_accept±nickname
-    * /auth_denied
-    * /broadcast±msg
-    *
-    * /msg_format_error±msg
-    * */
+     * /auth_request±login±password
+     * /auth_accept±nickname
+     * /auth_denied
+     * /broadcast±msg
+     *
+     * /msg_format_error±msg
+     * */
 
     public static final String DELIMITER = "±";
     public static final String AUTH_REQUEST = "/auth_request";
@@ -51,5 +51,4 @@ public class Library {
         return TYPE_BROADCAST + DELIMITER + System.currentTimeMillis() +
                 DELIMITER + src + DELIMITER + message;
     }
-
 }
