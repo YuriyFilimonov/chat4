@@ -1,0 +1,35 @@
+Start
+Ready
+16:14:49: Server: fil connected
+16:15:01: fil: 1
+16:15:07: fil: 22
+16:15:09: fil: 333
+16:15:11: fil: 444
+16:15:14: fil: 555
+Stop
+Start
+Ready
+17:55:45: Server: fil connected
+17:56:15: fil: tdys
+Stop
+Start
+Ready
+22:15:36: Server: fil connected
+22:16:03: fil: hello!
+restart the login with the new nickname: fill
+/auth_denied
+Stop
+Start
+Ready
+22:16:59: Server: fill connected
+22:17:11: fill: qqq
+Stop
+Start
+Ready
+22:22:49: Server: fill connected
+22:23:19: fill: waw
+Stop
+Start
+Ready
+23:25:04: Server: fill connected
+Stop

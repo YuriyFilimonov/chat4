@@ -18,7 +18,6 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     ServerSocketThread server;
     ChatServerListener listener;
     Vector<SocketThread> clients = new Vector<>();
-    Scanner scanner;
 
     public ChatServer(ChatServerListener listener) {
         this.listener = listener;

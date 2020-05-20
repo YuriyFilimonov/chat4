@@ -49,6 +49,4 @@ public class ClientThread extends SocketThread {
         sendMessage(Library.getMsgFormatError(msg));
         close();
     }
-
-
 }
