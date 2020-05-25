@@ -8,6 +8,7 @@ import network.SocketThreadListener;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 import java.util.Vector;
 
 import static java.lang.Thread.sleep;
@@ -142,6 +143,11 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
             case Library.TYPE_BCAST_CLIENT:
                 sendToAllAuthorizedClients(Library.getTypeBroadcast(
                         client.getNickname(), arr[1]));
+                break;
+            case Library.CHANGE_NICKNAME:
+                client.sendMessage(Library.getTypeBcastClient("restart the login with the new nickname: " + arr[3]));
+                client.authFail();
+                SqlClient.setNickname(arr[1], arr[2], arr[3]);
                 break;
             default:
                 client.sendMessage(Library.getMsgFormatError(msg));

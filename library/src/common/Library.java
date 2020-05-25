@@ -11,6 +11,8 @@ public class Library {
      * */
 
     public static final String DELIMITER = "±";
+    public static final String REGISTRATION = "/registration";
+    public static final String CHANGE_NICKNAME = "/change_nickname";
     public static final String AUTH_REQUEST = "/auth_request";
     public static final String AUTH_ACCEPT = "/auth_accept";
     public static final String AUTH_DENIED = "/auth_denied";
@@ -30,6 +32,9 @@ public class Library {
         return USER_LIST + DELIMITER + users;
     }
 
+    public static String getChangeNickname(String login, String password, String nickname) {
+        return CHANGE_NICKNAME + DELIMITER + login + DELIMITER + password+ DELIMITER + nickname;
+    }
 
     public static String getAuthRequest(String login, String password) {
         return AUTH_REQUEST + DELIMITER + login + DELIMITER + password;
