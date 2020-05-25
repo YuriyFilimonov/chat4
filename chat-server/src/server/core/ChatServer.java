@@ -8,8 +8,9 @@ import network.SocketThreadListener;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static java.lang.Thread.sleep;
 
@@ -18,6 +19,7 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     ServerSocketThread server;
     ChatServerListener listener;
     Vector<SocketThread> clients = new Vector<>();
+    ExecutorService executorService = Executors.newCachedThreadPool();
 
     public ChatServer(ChatServerListener listener) {
         this.listener = listener;
@@ -26,14 +28,17 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     public void start(int port) {
         if (server != null && server.isAlive())
             putLog("Already running");
-        else
+        else {
             server = new ServerSocketThread(this, "Server", port, 2000);
+            executorService.execute(server);
+        }
     }
 
     public void stop() {
         if (server == null || !server.isAlive()) {
             putLog("Nothing to stop");
         } else {
+            executorService.shutdown();
             server.interrupt();
         }
     }
@@ -66,7 +71,7 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     public void onSocketAccepted(ServerSocketThread thread, ServerSocket server, Socket socket) {
         putLog("Client connected");
         String name = "SocketThread " + socket.getInetAddress() + ":" + socket.getPort();
-        new ClientThread(this, name, socket);
+        executorService.execute( new ClientThread(this, name, socket));
     }
 
     @Override
